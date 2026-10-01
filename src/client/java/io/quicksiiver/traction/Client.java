@@ -5,7 +5,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.InputMap;
 import javax.swing.JFrame;
 
 import client.java.io.quicksiiver.traction.misc.MainWindowListener;
@@ -43,7 +42,7 @@ public class Client {
 
     // main stuff (do every tick)
     public void tick(double dt) {
-        trackPanel.getCar().processInputs(false, false, false, false, 0.5, dt);
+        if (frame.getContentPane() == trackPanel) { trackPanel.tick(dt); }
     }
 
     // setters
@@ -81,9 +80,9 @@ public class Client {
         public void mouseMoved(MouseEvent e) {}
 
         // helpers
-        private static boolean near(Point p1, Point p2, double r) {
-            if (r*r >= Math.pow(p2.getX() - p1.getX(), 2) + Math.pow(p2.getY() - p1.getY(), 2)) { return true; }
-            else { return false; }
-        }
+        // private static boolean near(Point p1, Point p2, double r) {
+        //     if (r*r >= Math.pow(p2.getX() - p1.getX(), 2) + Math.pow(p2.getY() - p1.getY(), 2)) { return true; }
+        //     else { return false; }
+        // }
     }
 }

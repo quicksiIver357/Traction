@@ -1,7 +1,5 @@
 package main.java.io.quicksiiver.traction.core.tiles;
 
-import java.nio.file.Path;
-
 public class DriveableTile extends Tile {
     private final double FRICTION;
 
@@ -14,5 +12,9 @@ public class DriveableTile extends Tile {
         this.FRICTION = friction;
     }
 
+    // getters
+    public double getFriction() { return FRICTION; }
+
     public DriveableTile copy() { return new DriveableTile(TILES_FOLDER, FRICTION); }
+    
 }
