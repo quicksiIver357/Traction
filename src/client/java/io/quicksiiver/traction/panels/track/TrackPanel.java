@@ -2,11 +2,15 @@ package client.java.io.quicksiiver.traction.panels.track;
 
 import java.awt.Color;
 import java.awt.Graphics;
-
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
 
+import javax.swing.ActionMap;
 import javax.swing.ImageIcon;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 import main.java.io.quicksiiver.traction.core.Car;
 import main.java.io.quicksiiver.traction.core.Track;
@@ -28,6 +32,29 @@ public class TrackPanel extends JPanel {
         setTrack(t);
         car = c;
         zoom = 1; // 100%
+
+        
+        // keyboard input handling
+        InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = getActionMap();
+
+        // prevents typos
+        final String ACCELERATE = "accelerate";
+        final String LEFT = "left";
+        final String BRAKE = "brake";
+        final String RIGHT = "right";
+
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0), ACCELERATE);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0), LEFT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0), BRAKE);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0), RIGHT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), ACCELERATE);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), BRAKE);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), LEFT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), RIGHT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SHIFT, 0), BRAKE);
+        
+        // TODO: add actions listeners to the ActionMap
     }
 
     // setters

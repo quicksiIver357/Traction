@@ -15,25 +15,19 @@ public class Track {
     private String name; // the name of the map, to be written to [name].json
 
     // classifiers
-    static {
-        
-    }
-
     public static final Path DEFAULT_PATH = Path.of("src", "main", "resources", "data", "maps");
 
     // constructors
     public Track() { this(10, 10); }
     public Track(int width, int height) { 
-        Tile[][] tempMap = new Tile[height][width]; // rows and then columns
+        map = new Tile[height][width]; // rows and then columns
 
         // fill all of them
-        for (int i = 0; i < tempMap.length; i++) {
-            for (int j = 0; j < tempMap[i].length; j++) {
-                tempMap[i][j] = DriveableTile.DEFAULT;
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[i].length; j++) {
+                map[i][j] = DriveableTile.DEFAULT;
             }
         }
-
-        this(tempMap);
     } 
     public Track(Tile[][] map) { this.map = map.clone(); }
 

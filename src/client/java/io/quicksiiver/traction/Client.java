@@ -5,6 +5,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import javax.swing.InputMap;
 import javax.swing.JFrame;
 
 import client.java.io.quicksiiver.traction.misc.MainWindowListener;
@@ -29,6 +30,7 @@ public class Client {
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(new MainWindowListener());
 
+        // mouse input handling
         MouseList m = new MouseList();
         frame.addMouseListener(m);
         frame.addMouseMotionListener(m);
