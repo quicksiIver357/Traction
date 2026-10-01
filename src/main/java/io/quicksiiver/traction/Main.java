@@ -24,6 +24,7 @@ public abstract class Main {
         // stuff to do with consistent framerate
         long previous = System.nanoTime();
         double accumulator = 0;
+        long physicsTicks = 0;
 
         while (true) {
             Client.instance.repaint();
@@ -38,6 +39,9 @@ public abstract class Main {
                 Client.instance.tick(1 / FPS);
                 accumulator -= 1 / FPS;
             }
+
+            physicsTicks++;
+            System.out.println(physicsTicks);
         }
     }
 

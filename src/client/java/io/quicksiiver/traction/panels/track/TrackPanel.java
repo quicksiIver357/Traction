@@ -2,8 +2,11 @@ package client.java.io.quicksiiver.traction.panels.track;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 import java.util.HashMap;
 
 import javax.swing.AbstractAction;
@@ -28,6 +31,7 @@ public class TrackPanel extends JPanel {
 
     // prevent magic numbers
     private static final int TILE_SIZE = 80;
+    private static final int CAR_SIZE = 80;
 
     public TrackPanel(Track t, Car c) { 
         setBackground(Color.BLACK);
@@ -68,7 +72,6 @@ public class TrackPanel extends JPanel {
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), RIGHT + RELEASE);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SHIFT, 0, true), BRAKE + RELEASE);
         
-        // TODO: add actions listeners to the ActionMap
         actionMap.put(ACCELERATE, new AbstractAction() {
             @Override 
             public void actionPerformed(ActionEvent e) { car.setWPressed(true); }
@@ -104,8 +107,8 @@ public class TrackPanel extends JPanel {
     }
 
     public void tick(double dt) {
-        int x = (int) ( car.getX() / TILE_SIZE ) - track.getMap().length / 2;
-        int y = (int) ( car.getY() / TILE_SIZE ); // TODO: SAme for the y please fix
+        int x = (int) ( car.getX() / TILE_SIZE + track.getMap().length / 2.0 );
+        int y = (int) ( car.getY() / TILE_SIZE + track.getMap()[0].length / 2.0 );
 
         Tile current = track.getMap()[y][x];
 
@@ -141,30 +144,57 @@ public class TrackPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        Graphics2D g2d = (Graphics2D) g;
+
         // g.setColor(Color.RED);
         // g.fillRect(0, 0, 100, 100);
 
         // System.out.println("Panel: " + getWidth() + "x" + getHeight());
         // System.out.println("Track: " + track.getWidth() + "x" + track.getHeight());
 
-        for (int i = 0; i < track.getWidth(); i++) {
-            for (int j = 0; j < track.getHeight(); j++) {
+        Point screenCenter = new Point(getWidth() / 2, getHeight() / 2);
+
+        int trackWidth = track.getWidth();
+        int trackHeight = track.getHeight();
+
+        // draw each tile
+        for (int i = 0; i < trackWidth; i++) {
+            for (int j = 0; j < trackHeight; j++) {
                 Tile currentTile = track.getTile(i, j);
                 ImageIcon toDraw = images.get(currentTile);
 
 
-                double xCenter = getWidth() / 2.0 - car.getX();
-                double xRelative = TILE_SIZE * zoom * ( i - track.getWidth() / 2.0 );
-                double yCenter = getHeight() / 2.0 - car.getY();
-                double yRelative = TILE_SIZE * zoom * ( j - track.getHeight() / 2.0 );
+                double xCenter = screenCenter.x - car.getX();
+                double xRelative = TILE_SIZE * zoom * ( i - trackWidth / 2.0 );
+                double yCenter = screenCenter.y - car.getY();
+                double yRelative = TILE_SIZE * zoom * ( j - trackHeight / 2.0 );
 
                 int imageScale = (int) (zoom * TILE_SIZE);
 
                 int x = (int) (xCenter + xRelative - imageScale / 2.0);
                 int y = (int) (yCenter + yRelative - imageScale / 2.0);
 
-                g.drawImage(toDraw.getImage(), x, y, imageScale, imageScale, null);
+                g2d.drawImage(toDraw.getImage(), x, y, imageScale, imageScale, null);
             }
         }
+
+        // draw the car
+        // the goal of this is to preserve the old AffineTransform so it doesn't disrupt anything that was relying on it not changing.
+        AffineTransform backup = g2d.getTransform(); 
+
+        // then make a new one and rotate the car based on its rotation
+        AffineTransform trans = new AffineTransform();
+        trans.rotate(car.getRotation(), screenCenter.x, screenCenter.y); // rotate it around the center of the car (which is also the screen center)
+        g2d.transform(trans); // rotate the graphics component
+
+        // do some calculations for drawing the car
+        int imageScale = (int) (zoom * CAR_SIZE);
+
+        // draw it
+        ImageIcon carImage = new ImageIcon(Car.IMG_FILEPATH);
+        g2d.drawImage(carImage.getImage(), screenCenter.x - imageScale / 2, screenCenter.y - imageScale / 2, imageScale, imageScale, null);
+
+        // finally, restore the original AffineTransform
+        g2d.transform(backup);
     }
 }
