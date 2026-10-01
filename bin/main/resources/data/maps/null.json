@@ -1,0 +1,424 @@
+{
+  "map": [
+    [
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      }
+    ],
+    [
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      }
+    ],
+    [
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      }
+    ],
+    [
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      }
+    ],
+    [
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      }
+    ],
+    [
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      }
+    ],
+    [
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      }
+    ],
+    [
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      }
+    ],
+    [
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      }
+    ],
+    [
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      },
+      {
+        "FRICTION": 0.8,
+        "PATH": "src/main/resources/assets/tile/default.png"
+      }
+    ]
+  ]
+}
