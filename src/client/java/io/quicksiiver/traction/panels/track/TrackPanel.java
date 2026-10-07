@@ -30,16 +30,18 @@ public class TrackPanel extends JPanel {
     private HashMap<Tile, ImageIcon> images;
 
     // prevent magic numbers
-    private static final int TILE_SIZE = 80;
-    private static final int CAR_SIZE = 80;
+    public static final int TILE_SIZE = 80;
+    public static final int CAR_SIZE = 80; // needs to be accessed by Car.java
 
     public TrackPanel(Track t, Car c) { 
         setBackground(Color.BLACK);
 
+        // set the track and car and move it to the start position
         setTrack(t);
         car = c;
-        zoom = 1; // 100%
+        reset();
 
+        zoom = 1; // 100%
         
         // keyboard input handling
         InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -107,17 +109,23 @@ public class TrackPanel extends JPanel {
     }
 
     public void tick(double dt) {
-        int x = (int) ( car.getX() / TILE_SIZE + track.getMap().length / 2.0 );
-        int y = (int) ( car.getY() / TILE_SIZE + track.getMap()[0].length / 2.0 );
+        // put here everything that should happen each frame (besides rendering or physics)
+        car.processInputs(track, getTileGrip(), dt);
+    }
 
-        Tile current = track.getMap()[y][x];
+    // helpers
+    private double getTileGrip() {
+        Tile current = track.getMap()[getTileY()][getTileX()];
 
-        if (current instanceof DriveableTile) {
-            double friction = ((DriveableTile) current).getFriction();
-
-            car.processInputs(friction, dt);
-        }
-
+        if (current instanceof DriveableTile) { return ((DriveableTile) current).getFriction(); }
+        else { throw new IllegalStateException("The car was stuck within a wall. "); }
+    }
+    private int getTileX() { return (int) ( car.getX() / TILE_SIZE ); }
+    private int getTileY() { return (int) ( car.getY() / TILE_SIZE ); }
+    private void reset() {
+        car.setX(track.getStartX() * TILE_SIZE);
+        car.setY(track.getStartY() * TILE_SIZE);
+        car.setRotation(track.getStartRotation());
     }
 
     // setters
@@ -152,29 +160,36 @@ public class TrackPanel extends JPanel {
         // System.out.println("Panel: " + getWidth() + "x" + getHeight());
         // System.out.println("Track: " + track.getWidth() + "x" + track.getHeight());
 
+
+        // things you only need to calculate once
         Point screenCenter = new Point(getWidth() / 2, getHeight() / 2);
 
         int trackWidth = track.getWidth();
         int trackHeight = track.getHeight();
+        int tileImageScale = (int) (zoom * TILE_SIZE);
 
         // draw each tile
-        for (int i = 0; i < trackWidth; i++) {
-            for (int j = 0; j < trackHeight; j++) {
+        for (int i = 0; i < trackWidth; i++) {            
+            double xCenter = screenCenter.x - car.getX();
+            double xRelative = TILE_SIZE * zoom * i;
+            int x = (int) (xCenter + xRelative - tileImageScale / 2.0);
+
+            // don't draw it becuase it's off the screen
+            if (x + TILE_SIZE < 0 || x > getWidth()) { continue; }
+
+            // otherwise move on
+            for (int j = 0; j < trackHeight; j++) {                
+                double yCenter = screenCenter.y - car.getY();
+                double yRelative = TILE_SIZE * zoom * j;
+                int y = (int) (yCenter + yRelative - tileImageScale / 2.0);
+
+                // don't draw it because it's off the screen
+                if (y + TILE_SIZE < 0 || y > getHeight()) { continue; }
+
                 Tile currentTile = track.getTile(i, j);
                 ImageIcon toDraw = images.get(currentTile);
 
-
-                double xCenter = screenCenter.x - car.getX();
-                double xRelative = TILE_SIZE * zoom * ( i - trackWidth / 2.0 );
-                double yCenter = screenCenter.y - car.getY();
-                double yRelative = TILE_SIZE * zoom * ( j - trackHeight / 2.0 );
-
-                int imageScale = (int) (zoom * TILE_SIZE);
-
-                int x = (int) (xCenter + xRelative - imageScale / 2.0);
-                int y = (int) (yCenter + yRelative - imageScale / 2.0);
-
-                g2d.drawImage(toDraw.getImage(), x, y, imageScale, imageScale, null);
+                g2d.drawImage(toDraw.getImage(), x, y, tileImageScale, tileImageScale, null);
             }
         }
 
@@ -184,15 +199,16 @@ public class TrackPanel extends JPanel {
 
         // then make a new one and rotate the car based on its rotation
         AffineTransform trans = new AffineTransform();
-        trans.rotate(car.getRotation(), screenCenter.x, screenCenter.y); // rotate it around the center of the car (which is also the screen center)
+        // rotate it around the center of the car (which is also the screen center)
+        // you gotta add pi bc im an idiot and made the car texture upside down
+        trans.rotate(car.getRotation() + Math.PI, screenCenter.x, screenCenter.y);  
         g2d.transform(trans); // rotate the graphics component
 
         // do some calculations for drawing the car
-        int imageScale = (int) (zoom * CAR_SIZE);
+        int carImageScale = (int) (zoom * CAR_SIZE);
 
         // draw it
-        ImageIcon carImage = new ImageIcon(Car.IMG_FILEPATH);
-        g2d.drawImage(carImage.getImage(), screenCenter.x - imageScale / 2, screenCenter.y - imageScale / 2, imageScale, imageScale, null);
+        g2d.drawImage(Car.IMAGE.getImage(), screenCenter.x - carImageScale / 2, screenCenter.y - carImageScale / 2, carImageScale, carImageScale, null);
 
         // finally, restore the original AffineTransform
         g2d.transform(backup);

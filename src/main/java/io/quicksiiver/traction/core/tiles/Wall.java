@@ -4,7 +4,7 @@ public class Wall extends Tile {
     private final double BOUNCYNESS;
 
     // types of walls
-    public static final Wall BASIC = new Wall("basic.png", 0.2);
+    public static final Wall DEFAULT = new Wall("basic.png", 0.2);
     public static final Wall PLASTIC = new Wall("plastic.png", 0.8);
 
     // constructor
@@ -21,4 +21,7 @@ public class Wall extends Tile {
 
     // implement the copy method
     public Wall copy() { return new Wall(getPath().toString(), BOUNCYNESS); }
+
+    // getters
+    public double getBouncyness() { return BOUNCYNESS; }
 }

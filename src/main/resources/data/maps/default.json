@@ -40201,7 +40201,8 @@
       }
     ]
   ],
-  "startX": 0,
-  "startY": 0,
-  "startRotation": 0
+  "startX": 50,
+  "startY": 50,
+  "startRotation": 3.141592653589793,
+  "name": "default"
 }

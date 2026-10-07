@@ -3,5 +3,7 @@
     "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [
         "lib/**/*.jar"
-    ]
+    ],
+    "editor.inlineSuggest.enabled": false,
+    "github.copilot.inlineSuggest.enable": false
 }

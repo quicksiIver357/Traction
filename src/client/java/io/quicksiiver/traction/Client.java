@@ -50,6 +50,7 @@ public class Client {
 
     // getters
     public Track getMap() { return map.copy(); }
+    public Car getCar() { return trackPanel.getCar(); }
 
     // accessors
     public void repaint() { frame.repaint(); }

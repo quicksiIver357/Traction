@@ -8,28 +8,49 @@ import com.google.gson.Gson;
 
 import main.java.io.quicksiiver.traction.core.tiles.DriveableTile;
 import main.java.io.quicksiiver.traction.core.tiles.Tile;
+import main.java.io.quicksiiver.traction.core.tiles.Wall;
 
 public class Track {
     // instance variables
     private Tile[][] map; // stores the rows and columns
+
+    // stores what tile the car starts on
+    private int startX; 
+    private int startY;
+    private double startRotation; // radians
+
     private String name; // the name of the map, to be written to [name].json
 
     // classifiers
     public static final Path DEFAULT_PATH = Path.of("src", "main", "resources", "data", "maps");
 
     // constructors
-    public Track() { this(10, 10); }
-    public Track(int width, int height) { 
-        map = new Tile[height][width]; // rows and then columns
+    public Track() { this(100, 100); }
+    public Track(int width, int height) { this(createBlankMap(width, height)); } 
+    public Track(Tile[][] map) { // main constructor
+        this.map = map.clone(); 
 
-        // fill all of them
-        for (int i = 0; i < map.length; i++) {
-            for (int j = 0; j < map[i].length; j++) {
-                map[i][j] = DriveableTile.DEFAULT;
+        this.name = "default";
+        this.startX = map.length / 2;
+        this.startY = map[0].length / 2;
+        this.startRotation = Math.PI;
+    }
+
+    // helpers
+    private static Tile[][] createBlankMap(int w, int h) {
+        Tile[][] blankMap = new Tile[h][w];
+
+        for (int i = 0; i < blankMap.length; i++) {
+            for (int j = 0; j < blankMap[0].length; j++) {
+                // set each tile to be the same thing, the default tile
+                // but make sure that the edges are walls
+                blankMap[i][j] = i == 0 || i == blankMap.length || j == 0 || j == blankMap[0].length
+                ? Wall.DEFAULT : DriveableTile.DEFAULT;
             }
         }
-    } 
-    public Track(Tile[][] map) { this.map = map.clone(); }
+
+        return blankMap;
+    }
 
     // getters
     public Tile getTile(int x, int y) { return map[y][x]; }
@@ -37,6 +58,9 @@ public class Track {
     public int getWidth() { return map.length; }
     public int getHeight() { return map[0].length; }
     public Tile[][] getMap() { return map.clone(); }
+    public int getStartX() { return startX; }
+    public int getStartY() { return startY; }
+    public double getStartRotation() { return startRotation; }
 
     // setters
     public void setElement(int x, int y, Tile value) { map[y][x] = value.copy(); } // row y, column x
