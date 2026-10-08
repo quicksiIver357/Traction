@@ -82,11 +82,15 @@ public class Car {
             double frontSpeed = speed * Math.cos(angleOffset);
 
             // apply some extra drag to the car on the sideways axis
-            sideSpeed -= sideSpeed * DRAG_RATE * grip * (accelerateInput != 0 ? 1 : 3) / 10;
+            sideSpeed -= sideSpeed * DRAG_RATE * grip; // DONT multiply by dt
+
+            // replace r with -r to rotate the xy plane in the opposite direction,
+            // back to the world space
+            angleOffset = -r - Math.atan2(frontSpeed, sideSpeed) + Math.PI / 2;
 
             // recompute vx and vy after the application
-            vx = frontSpeed * -Math.sin(r) - sideSpeed * Math.cos(r);
-            vy = frontSpeed * Math.cos(r) + sideSpeed * -Math.sin(r);
+            vx = speed * Math.sin(angleOffset);
+            vy = speed * Math.cos(angleOffset);
 
             // recalculate speed
             speed = getSpeed();
