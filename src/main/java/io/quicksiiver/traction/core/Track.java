@@ -44,7 +44,7 @@ public class Track {
             for (int j = 0; j < blankMap[0].length; j++) {
                 // set each tile to be the same thing, the default tile
                 // but make sure that the edges are walls
-                blankMap[i][j] = i == 0 || i == blankMap.length || j == 0 || j == blankMap[0].length
+                blankMap[i][j] = i == 0 || i == blankMap.length - 1 || j == 0 || j == blankMap[0].length - 1
                 ? Wall.DEFAULT : DriveableTile.DEFAULT;
             }
         }

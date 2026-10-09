@@ -56,7 +56,7 @@ public abstract class Main {
         Client.instance.repaint();
 
         frames++;
-        // System.out.println("Frames: " + frames);
+        System.out.println("Frames: " + frames);
     }
 
     // this runs when the game stops
