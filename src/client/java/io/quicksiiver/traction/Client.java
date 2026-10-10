@@ -1,41 +1,44 @@
 package client.java.io.quicksiiver.traction;
 
-import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.Component;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import client.java.io.quicksiiver.traction.misc.MainWindowListener;
 import client.java.io.quicksiiver.traction.panels.main.MainMenuPanel;
+import client.java.io.quicksiiver.traction.panels.track.TrackEditorPanel;
 import client.java.io.quicksiiver.traction.panels.track.TrackPanel;
 import main.java.io.quicksiiver.traction.core.Car;
 import main.java.io.quicksiiver.traction.core.Track;
 
 public class Client {
-    public static final Client instance = new Client();
-
-    // storage
-    private Track map;
+    public static final Client instance = new Client();   
 
     // drawing
     private JFrame frame = new JFrame();
     private MainMenuPanel mainPanel = new MainMenuPanel(); 
     private TrackPanel trackPanel = new TrackPanel(new Track(), new Car());
+    private TrackEditorPanel trackEditorPanel = new TrackEditorPanel(new Track());
 
     private Client() { // hides constructor
         // set up the window
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(new MainWindowListener());
 
-        // mouse input handling
-        MouseList m = new MouseList();
-        frame.addMouseListener(m);
-        frame.addMouseMotionListener(m);
+        // drawing
+        // add all of them but make them invisible
+        frame.add(mainPanel);
+        frame.add(trackPanel);
+        frame.add(trackEditorPanel);
 
-        // Display the window.
-        frame.setContentPane(trackPanel);
+        // set all of them to invisible
+        for (Component component : frame.getComponents()) {
+            if (component instanceof JPanel) { ((JPanel) component).setVisible(false); }
+        }
+
+        setActivePanel(trackEditorPanel);
+        
         frame.setSize(1024, 576);
         frame.setVisible(true);
     } 
@@ -46,44 +49,40 @@ public class Client {
     }
 
     // setters
-    public void setMap(Track m) { map = m.copy(); }
+    private void setActivePanel(JPanel panel) {
+        // remove the old one, if there is one
+        JPanel activePanel = getActivePanel();
+        if (activePanel != null) { activePanel.setVisible(false); }
+
+        // add the new one
+        panel.setVisible(true);
+    }
+    public void setTrack(Track t) {
+        trackEditorPanel.setTrack(t);
+        trackPanel.setTrack(t);
+    }
 
     // getters
-    public Track getMap() { return map.copy(); }
+    public Track getTrack() { return trackPanel.getTrack(); }
     public Car getCar() { return trackPanel.getCar(); }
+    private JPanel getActivePanel() {
+        for (Component component : frame.getContentPane().getComponents()) {
+            if (component instanceof JPanel) {
+                JPanel panel = (JPanel) component;
+
+                if (panel.isVisible()) { return panel; }
+            }
+        }
+
+        return null;
+    }
 
     // accessors
     public void repaint() { frame.repaint(); }
-    public void dispose() { frame.dispose(); }
-
-    // input handling
-    private class MouseList implements MouseListener, MouseMotionListener {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            Point mousePos = e.getPoint();
-
-            mainPanel.clicked(mousePos);
-        }
+    public void dispose() { 
+        frame.dispose();
+        // track.save(Main.gson);
         
-        @Override
-        public void mouseDragged(MouseEvent e) {}
-
-        // satisfy implementations
-        @Override
-        public void mouseEntered(MouseEvent e) {}
-        @Override
-        public void mouseExited(MouseEvent e) {}
-        @Override
-        public void mouseReleased(MouseEvent e) {}
-        @Override
-        public void mousePressed(MouseEvent e) {}
-        @Override
-        public void mouseMoved(MouseEvent e) {}
-
-        // helpers
-        // private static boolean near(Point p1, Point p2, double r) {
-        //     if (r*r >= Math.pow(p2.getX() - p1.getX(), 2) + Math.pow(p2.getY() - p1.getY(), 2)) { return true; }
-        //     else { return false; }
-        // }
-    }
+        // System.out.println(track);
+    } 
 }

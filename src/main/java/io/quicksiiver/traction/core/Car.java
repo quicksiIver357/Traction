@@ -4,7 +4,7 @@ import javax.swing.ImageIcon;
 
 import client.java.io.quicksiiver.traction.panels.track.TrackPanel;
 import main.java.io.quicksiiver.traction.core.tiles.Tile;
-import main.java.io.quicksiiver.traction.core.tiles.Wall;
+import main.java.io.quicksiiver.traction.core.tiles.specific.Wall;
 
 public class Car {
     private double vx; // x velocity
@@ -198,10 +198,15 @@ public class Car {
     public void setAPressed(boolean pressed) { a = pressed; }
     public void setSPressed(boolean pressed) { s = pressed; }
     public void setDPressed(boolean pressed) { d = pressed; }
-    public void setRotation(double rotation) { r = rotation; }
-    public void setX(double x) { this.x = x; }
-    public void setY(double y) { this.y = y; }
-    public void resetVelocity() { vx = vy = 0; }
+    public void reset(double x, double y, double r) {
+        // go to starting position
+        this.r = r;
+        this.x = x;
+        this.y = y;
+        
+        // reset velocity
+        vx = vy = 0;
+    }
 
     // getters
     public double getX() { return x; }

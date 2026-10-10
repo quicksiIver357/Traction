@@ -3,12 +3,13 @@ package main.java.io.quicksiiver.traction.core;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 import com.google.gson.Gson;
 
-import main.java.io.quicksiiver.traction.core.tiles.DriveableTile;
 import main.java.io.quicksiiver.traction.core.tiles.Tile;
-import main.java.io.quicksiiver.traction.core.tiles.Wall;
+import main.java.io.quicksiiver.traction.core.tiles.specific.DriveableTile;
+import main.java.io.quicksiiver.traction.core.tiles.specific.Wall;
 
 public class Track {
     // instance variables
@@ -18,11 +19,11 @@ public class Track {
     private int startX; 
     private int startY;
     private double startRotation; // radians
-
+    private boolean playable; // contains start and end tiles
     private String name; // the name of the map, to be written to [name].json
 
     // classifiers
-    public static final Path DEFAULT_PATH = Path.of("src", "main", "resources", "data", "maps");
+    public static final String DEFAULT_PATH = "src/main/resources/data/maps/";
 
     // constructors
     public Track() { this(100, 100); }
@@ -31,9 +32,33 @@ public class Track {
         this.map = map.clone(); 
 
         this.name = "default";
-        this.startX = map.length / 2;
-        this.startY = map[0].length / 2;
         this.startRotation = Math.PI;
+
+        // map verification
+        int numberOfStartTiles = 0;
+        int numberOfEndTiles = 0;
+        int startTileX = 0;
+        int startTileY = 0;
+
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[0].length; j++) {
+                if (map[j][i] == DriveableTile.START) { 
+                    numberOfStartTiles++; 
+
+                    startTileX = i;
+                    startTileY = j;
+                } 
+                else if (map[j][i] == DriveableTile.END) { numberOfEndTiles++; }
+            }
+        }
+
+        if (numberOfStartTiles != 1 || numberOfEndTiles == 0) { playable = false; }
+        else { playable = true; }
+
+        if (numberOfStartTiles > 0) {
+            startX = startTileX;
+            startY = startTileY;
+        }
     }
 
     // helpers
@@ -61,9 +86,23 @@ public class Track {
     public int getStartX() { return startX; }
     public int getStartY() { return startY; }
     public double getStartRotation() { return startRotation; }
+    public boolean contains(Tile t) {
+        // check every tile
+        for (Tile[] tiles : map) {
+            for (Tile tile : tiles) {
+                if (tile == t) { return true; }
+            }
+        }
+
+        return false;
+    }
+    public boolean getPlayable() { return playable; }
+    public String toString() {
+        return Arrays.deepToString(map) + name;
+    }
 
     // setters
-    public void setElement(int x, int y, Tile value) { map[y][x] = value.copy(); } // row y, column x
+    public void setElement(int x, int y, Tile value) { map[y][x] = value; } // row y, column x
 
     // SAVE-LOAD
     /**
@@ -137,15 +176,15 @@ public class Track {
      * with the filename [name].json where [name] is the Map's name.
      * @param gson : The Gson object to use for saving
      */
-    public void save(Gson gson) { save(gson, DEFAULT_PATH.resolve(name + ".json")); } // append the [name].json to the end of the Path
+    public void save(Gson gson) { save(gson, Path.of(DEFAULT_PATH + name + ".json")); } // append the [name].json to the end of the Path
 
-    public Track copy() {
-        Track copy = new Track();
+    public Track clone() {
+        Track clone = new Track();
 
         // copy values into the map
-        copy.map = this.map.clone(); 
-        copy.name = this.name;
+        clone.map = this.map.clone(); 
+        clone.name = new String(this.name);
 
-        return copy;
+        return clone;
     }
 }

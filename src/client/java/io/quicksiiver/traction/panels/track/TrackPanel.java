@@ -8,43 +8,33 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
-import java.util.HashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
-import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import main.java.io.quicksiiver.traction.core.Car;
 import main.java.io.quicksiiver.traction.core.Track;
-import main.java.io.quicksiiver.traction.core.tiles.DriveableTile;
 import main.java.io.quicksiiver.traction.core.tiles.Tile;
+import main.java.io.quicksiiver.traction.core.tiles.specific.DriveableTile;
 
-public class TrackPanel extends JPanel {
-    private Track track;
+public class TrackPanel extends GenericTrackPanel {
     private Car car; // only used for drawing
-    private double zoom = 1; // 100%
     private double timer = 0;
-
-    private HashMap<Tile, ImageIcon> images;
-
-    // debug
-    private boolean paused = false;
 
     // prevent magic numbers
     public static final int TILE_SIZE = 80;
     public static final int CAR_SIZE = 80; // needs to be accessed by Car.java
 
     public TrackPanel(Track t, Car c) { 
-        setBackground(Color.BLACK);
+        super(t);
 
         // set the track and car and move it to the start position
-        // (setTrack(Track) calls reset())
         car = c;
-        setTrack(t);
+        System.out.println(c);
+        reset();
         
         // keyboard input handling
         InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -56,7 +46,6 @@ public class TrackPanel extends JPanel {
         final String BRAKE = "brake";
         final String RIGHT = "right";
         final String RESET = "reset";
-        final String DEBUG_PAUSE = "pause";
         final String RELEASE = "_released";
 
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0, false), ACCELERATE);
@@ -68,7 +57,7 @@ public class TrackPanel extends JPanel {
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false), LEFT);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), RIGHT);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SHIFT, 0, false), BRAKE);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, false), DEBUG_PAUSE);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false), RESET);
 
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0, true), ACCELERATE + RELEASE);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, true), LEFT + RELEASE);
@@ -79,8 +68,6 @@ public class TrackPanel extends JPanel {
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, true), LEFT + RELEASE);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), RIGHT + RELEASE);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SHIFT, 0, true), BRAKE + RELEASE);
-        // inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true), RESET + RELEASE);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, true), DEBUG_PAUSE + RELEASE);
         
         actionMap.put(ACCELERATE, new AbstractAction() {
             @Override 
@@ -118,14 +105,7 @@ public class TrackPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) { reset(); }
         });
-        actionMap.put(DEBUG_PAUSE, new AbstractAction() {
-            @Override 
-            public void actionPerformed(ActionEvent e) { paused = true; }
-        });
-        actionMap.put(DEBUG_PAUSE + RELEASE, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) { paused = false; }
-        });
+    
     }
 
     public void tick(double dt) {
@@ -148,15 +128,9 @@ public class TrackPanel extends JPanel {
         // else { throw new IllegalStateException("The car was stuck within a wall. "); }
         else return 0;
     }
-    private int getTileX() { return (int) ( car.getX() / TILE_SIZE ); }
-    private int getTileY() { return (int) ( car.getY() / TILE_SIZE ); }
     private void reset() {
         // reset the car's variables
-        car.setX(track.getStartX() * TILE_SIZE);
-        car.setY(track.getStartY() * TILE_SIZE);
-        car.setRotation(track.getStartRotation());
-
-        car.resetVelocity();
+        car.reset(track.getStartX() * TILE_SIZE, track.getStartY() * TILE_SIZE, track.getStartRotation());
 
         // reset the timer to the countdown
         timer = -3;
@@ -164,25 +138,18 @@ public class TrackPanel extends JPanel {
 
     // setters
     public void setTrack(Track t) { 
-        track = t.copy(); 
-
-        // load all of the images
-        images = new HashMap<>();
-
-        for (Tile[] column : track.getMap()) {
-            for (Tile tile : column) {
-                if (!images.containsKey(tile)) { images.put(tile, new ImageIcon(tile.getPath())); } // if not already loaded, load it
-            }
-        }
-
+        super.setTrack(t);
+        System.out.println("help");
         reset();
     }
     // public void setCarPos(Point p) { car.setPos(p); }
     public void setZoom(double d) { zoom = d; }
 
     // getters
-    public Track getTrack() { return track.copy(); }
+    public Track getTrack() { return track; }
     public Car getCar() { return car; }
+    protected double getScreenX() { return car.getX(); }
+    protected double getScreenY() { return car.getY(); }
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -190,40 +157,10 @@ public class TrackPanel extends JPanel {
 
         Graphics2D g2d = (Graphics2D) g;
 
-        drawTiles(g2d);
         drawCar(g2d);
         drawTimer(g2d);
     }
 
-    // drawing helpers
-    private void drawTiles(Graphics2D g2d) {
-        Point screenCenter = new Point(getWidth() / 2, getHeight() / 2);
-        int tileImageScale = (int) (zoom * TILE_SIZE);
-
-        // draw each tile
-        for (int i = 0; i < track.getWidth(); i++) {            
-            double xCenter = screenCenter.x - car.getX() * zoom;
-            double xRelative = TILE_SIZE * zoom * i;
-            int x = (int) ((xCenter + xRelative - tileImageScale / 2.0));
-
-            // don't draw it becuase it's off the screen
-            if (x + TILE_SIZE < 0 || x > getWidth()) { continue; }
-
-            // otherwise move on
-            for (int j = 0; j < track.getHeight(); j++) {       
-                double yCenter = screenCenter.y - car.getY() * zoom;
-                double yRelative = TILE_SIZE * zoom * j;
-                int y = (int) ((yCenter + yRelative - tileImageScale / 2.0));
-
-                // don't draw it because it's off the screen
-                if (y + TILE_SIZE < 0 || y > getHeight()) { continue; }
-
-                Tile currentTile = track.getTile(i, j);
-                ImageIcon toDraw = images.get(currentTile);
-                g2d.drawImage(toDraw.getImage(), x, y, tileImageScale, tileImageScale, null);
-            }
-        }
-    }
     private void drawCar(Graphics2D g2d) {
         Point screenCenter = new Point(getWidth() / 2, getHeight() / 2);
 
@@ -276,5 +213,8 @@ public class TrackPanel extends JPanel {
         g2d.setColor(oldColor); // re-set the color to the previous to not break anything else
         g2d.setFont(oldFont); // do the same for font
     }
-    private String format(double a) { return (a < 10 ? "0" + String.format("%.2f", a) : "" + String.format("%.2f", a)); }
+    private String format(double a) { 
+        return (a < 10 ? "0" + String.format("%.2f", a) : "" + String.format("%.2f", a)); 
+    }
+
 }
