@@ -1,4 +1,4 @@
-package main.java.io.quicksiiver.traction.core.tiles.specific;
+package main.java.io.quicksiiver.traction.core.tiles.types;
 
 import java.util.ArrayList;
 
@@ -12,13 +12,13 @@ public class Wall extends Tile {
     private static ArrayList<Wall> walls = new ArrayList<>();
 
     // types of walls
-    public static final Wall DEFAULT = new Wall("basic.png", 0.5);
+    public static final Wall BASIC = new Wall("basic.png", 0.5);
     public static final Wall PLASTIC = new Wall("plastic.png", 0.8);
 
 
     // constructor
     private Wall(String filename, double bouncyness) { 
-        super(Tile.TILES_FOLDER + filename);
+        super(filename);
 
         // verify bouncyness and set it if its ok else throw an error
         if (!verifyBouncyness(bouncyness)) { throw new IllegalArgumentException("bouncyness of a Wall must be between 0 and 1!"); }

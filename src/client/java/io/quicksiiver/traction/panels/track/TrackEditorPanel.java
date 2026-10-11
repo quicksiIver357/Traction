@@ -18,6 +18,7 @@ import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -25,8 +26,8 @@ import javax.swing.KeyStroke;
 
 import main.java.io.quicksiiver.traction.core.Track;
 import main.java.io.quicksiiver.traction.core.tiles.Tile;
-import main.java.io.quicksiiver.traction.core.tiles.specific.DriveableTile;
-import main.java.io.quicksiiver.traction.core.tiles.specific.Wall;
+import main.java.io.quicksiiver.traction.core.tiles.types.DriveableTile;
+import main.java.io.quicksiiver.traction.core.tiles.types.Wall;
 
 public class TrackEditorPanel extends GenericTrackPanel {
     // information about the panel
@@ -85,6 +86,26 @@ public class TrackEditorPanel extends GenericTrackPanel {
     // fulfill superclass requirements (DONT CHANGE)
     protected double getScreenX() { return x; }
     protected double getScreenY() { return y; }
+
+    // setters
+    @Override 
+    public void setTrack(final Track track) {
+        // don't disturb the reference
+        Track t = track;
+
+        // if it's the default track pretend there is no track and it's creating a new one
+        if (t.equals(new Track())) {
+            // get width and height from user
+            int width = popupInt("Enter the width of the track:");
+            int height = popupInt("Enter the height of the track:");
+
+            // create a new Track
+            t = new Track(width, height);
+        }
+
+        // set the track
+        super.setTrack(t);
+    }
 
     // helpers
     private JScrollPane createJScrollPane(Tile[] tiles) {
@@ -146,6 +167,18 @@ public class TrackEditorPanel extends GenericTrackPanel {
 
         scrollPane.setViewportView(imagePanel); // add the image panel
         return scrollPane; // and return the finished JScrollPane
+    }
+    private int popupInt(String message) {
+        while (true) {
+            String widthString = JOptionPane.showInputDialog(this, message);
+
+            try {
+                return Integer.parseInt(widthString);
+            } catch (NumberFormatException e) {
+                // just don't break out of the loop and ask them again, but first reprimand them
+                JOptionPane.showMessageDialog(this, "Please enter a valid integer.");
+            }
+        }
     }
 
     // input handling
@@ -229,4 +262,5 @@ public class TrackEditorPanel extends GenericTrackPanel {
         //     else { return false; }
         // }
     }
+
 }

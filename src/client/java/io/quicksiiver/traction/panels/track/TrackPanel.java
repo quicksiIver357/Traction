@@ -18,7 +18,7 @@ import javax.swing.KeyStroke;
 import main.java.io.quicksiiver.traction.core.Car;
 import main.java.io.quicksiiver.traction.core.Track;
 import main.java.io.quicksiiver.traction.core.tiles.Tile;
-import main.java.io.quicksiiver.traction.core.tiles.specific.DriveableTile;
+import main.java.io.quicksiiver.traction.core.tiles.types.DriveableTile;
 
 public class TrackPanel extends GenericTrackPanel {
     private Car car; // only used for drawing
@@ -139,7 +139,7 @@ public class TrackPanel extends GenericTrackPanel {
     // setters
     public void setTrack(Track t) { 
         super.setTrack(t);
-        System.out.println("help");
+        // System.out.println("help");
         reset();
     }
     // public void setCarPos(Point p) { car.setPos(p); }

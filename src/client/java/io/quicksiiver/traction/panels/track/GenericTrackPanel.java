@@ -129,7 +129,7 @@ public abstract class GenericTrackPanel extends JPanel {
         int tileImageScale = (int) (zoom * TILE_SIZE) + 1;
 
         // draw each tile
-        for (int i = 0; i < track.getWidth(); i++) {            
+        for (int i = 0; i < track.getHeight(); i++) {            
             double xCenter = screenCenter.x - getScreenX() * zoom;
             double xRelative = TILE_SIZE * zoom * i;
             int x = (int) ((xCenter + xRelative - tileImageScale / 2.0));
@@ -138,7 +138,7 @@ public abstract class GenericTrackPanel extends JPanel {
             if (x + TILE_SIZE * zoom + 1 < 0 || x > getWidth()) { continue; }
 
             // otherwise move on
-            for (int j = 0; j < track.getHeight(); j++) {       
+            for (int j = 0; j < track.getWidth(); j++) {       
                 double yCenter = screenCenter.y - getScreenY() * zoom;
                 double yRelative = TILE_SIZE * zoom * j;
                 int y = (int) ((yCenter + yRelative - tileImageScale / 2.0));

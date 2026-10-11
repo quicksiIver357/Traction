@@ -1,4 +1,4 @@
-package main.java.io.quicksiiver.traction.core.tiles.specific;
+package main.java.io.quicksiiver.traction.core.tiles.types;
 
 import java.util.ArrayList;
 
@@ -16,12 +16,12 @@ public class DriveableTile extends Tile {
     public static final DriveableTile DEFAULT = new DriveableTile("default.png", 0.8);
     public static final DriveableTile ICE = new DriveableTile("ice.png", 0.1);
 
-    protected DriveableTile(String filename, double friction) {
-        super(Tile.TILES_FOLDER + filename);
+    protected DriveableTile(String id, double friction) {
+        super(id);
 
         this.FRICTION = friction;
 
-        tiles.add(this);
+        if (!(this instanceof SpecialTile)) { tiles.add(this); }
     }
 
     // getters

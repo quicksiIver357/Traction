@@ -25,9 +25,12 @@ public abstract class Main {
     public static int frames = 0;
 
     public static void main(String[] args) {
-        // load and set the map
-        Track track = Track.loadMap(gson, Path.of(Track.DEFAULT_PATH + "testing.json"));
-        Client.instance.setTrack(track);
+        // set it to anything but 0, 0 or 100, 100
+        // 0, 0 will break the getHeight() method becuase it does map[0].length,
+        // and if the length is 0 then map[0] does not exist
+        // 100, 100 will break it because that is the default contsructor and it checks against that
+        // 1, 1 is the most efficient as it creates the smallest possible 2d array.
+        Client.instance.setTrack(new Track(1, 1));
 
         // stuff to do with consistent framerate and physics rate
         long previousPhysics = System.nanoTime();
@@ -58,7 +61,7 @@ public abstract class Main {
         Client.instance.repaint();
 
         frames++;
-        System.out.println("Frames: " + frames);
+        // System.out.println("Frames: " + frames);
     }
 
     // this runs when the game stops
@@ -70,5 +73,16 @@ public abstract class Main {
         Client.instance.dispose();
         scanner.close();
         System.exit(0);
+    }
+
+    // utility
+    public static Track loadTrack(String name) {
+        Track track = Track.loadTrack(gson, Path.of(Track.DEFAULT_PATH + name + ".json"));
+        if (track == null) { 
+            track = new Track(); 
+            track.setName("testing");
+        }
+
+        return track;
     }
 }

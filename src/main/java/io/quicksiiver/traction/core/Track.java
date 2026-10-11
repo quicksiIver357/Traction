@@ -8,8 +8,9 @@ import java.util.Arrays;
 import com.google.gson.Gson;
 
 import main.java.io.quicksiiver.traction.core.tiles.Tile;
-import main.java.io.quicksiiver.traction.core.tiles.specific.DriveableTile;
-import main.java.io.quicksiiver.traction.core.tiles.specific.Wall;
+import main.java.io.quicksiiver.traction.core.tiles.types.Checkpoint;
+import main.java.io.quicksiiver.traction.core.tiles.types.DriveableTile;
+import main.java.io.quicksiiver.traction.core.tiles.types.Wall;
 
 public class Track {
     // instance variables
@@ -23,7 +24,7 @@ public class Track {
     private String name; // the name of the map, to be written to [name].json
 
     // classifiers
-    public static final String DEFAULT_PATH = "src/main/resources/data/maps/";
+    public static final String DEFAULT_PATH = "src/main/resources/data/tracks/";
 
     // constructors
     public Track() { this(100, 100); }
@@ -42,13 +43,13 @@ public class Track {
 
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[0].length; j++) {
-                if (map[j][i] == DriveableTile.START) { 
+                if (map[i][j] == DriveableTile.START) { 
                     numberOfStartTiles++; 
 
                     startTileX = i;
                     startTileY = j;
                 } 
-                else if (map[j][i] == DriveableTile.END) { numberOfEndTiles++; }
+                else if (map[i][j] == DriveableTile.END) { numberOfEndTiles++; }
             }
         }
 
@@ -70,7 +71,7 @@ public class Track {
                 // set each tile to be the same thing, the default tile
                 // but make sure that the edges are walls
                 blankMap[i][j] = i == 0 || i == blankMap.length - 1 || j == 0 || j == blankMap[0].length - 1
-                ? Wall.DEFAULT : DriveableTile.DEFAULT;
+                ? Wall.BASIC : DriveableTile.DEFAULT;
             }
         }
 
@@ -96,13 +97,32 @@ public class Track {
 
         return false;
     }
-    public boolean getPlayable() { return playable; }
+    public boolean playable() { return playable; }
     public String toString() {
         return Arrays.deepToString(map) + name;
+    }
+    public int getNumberOfCheckpoints() {
+        int numberOfCheckpoints = 0;
+
+        for (Tile[] tiles : map) {
+            for (Tile tile : tiles) {
+                if (tile instanceof Checkpoint) {
+                    Checkpoint checkpoint = (Checkpoint) tile;
+                    int group = checkpoint.getGroup();
+
+                    if (group > numberOfCheckpoints) {
+                        numberOfCheckpoints = group;
+                    }
+                }
+            }
+        }
+
+        return numberOfCheckpoints;
     }
 
     // setters
     public void setElement(int x, int y, Tile value) { map[y][x] = value; } // row y, column x
+    public void setName(String name) { this.name = name; }
 
     // SAVE-LOAD
     /**
@@ -113,26 +133,26 @@ public class Track {
      * @return The Map from the filepath, or, if there is not a Map 
      * at that location, create a new one.
      */
-    public static Track loadMap(Gson gson, Path path, boolean printInfo) {
+    public static Track loadTrack(Gson gson, Path path, boolean printInfo) {
         // load Map
-        Track map;
+        Track track;
 
         // try to load
         try {
             String json = Files.readString(path);
-            map = gson.fromJson(json, Track.class);
+            track = gson.fromJson(json, Track.class);
 
             if (printInfo) { System.out.println("Map loaded successfully!"); } // print that it loaded fine
 
         } catch (IOException e) { // in case of no Map, create a new one
             if (printInfo) { System.out.println("Could not load Map. Creating a new one. . ."); }
 
-            map = new Track(); // create a new Map
+            track = new Track(); // create a new Map
 
             if (printInfo) { System.out.println("Map created successfully!"); }
         }
 
-        return map;
+        return track;
     }
     /**
      * Loads a Map from a filepath. 
@@ -141,17 +161,18 @@ public class Track {
      * @return The Map from the filepath, or, if there is not a Map 
      * at that location, create a new one.
      */
-    public static Track loadMap(Gson gson, Path path) { return loadMap(gson, path, false); } // default to no info printed
+    public static Track loadTrack(Gson gson, Path path) { return loadTrack(gson, path, false); } // default to no info printed
 
-    // SAVE Map
+    // SAVE Track
     /**
-     * Saves a Map to a file.
+     * Saves a Track to a file.
      * @param gson : The Gson object to use for saving
-     * @param path : The path to be saved to
      * @param printInfo Whether or not to print information about the saving
      * (used for debug)
      */
-    public void save(Gson gson, Path path, boolean printInfo) {
+    public void save(Gson gson, boolean printInfo) {
+        Path path = Path.of(DEFAULT_PATH + name + ".json");
+
         try {
             // convert to String
             String json = gson.toJson(this);
@@ -166,18 +187,36 @@ public class Track {
         }
     }
     /**
-     * Saves a Map to a file.
-     * @param gson : The Gson object to use for saving
-     * @param path : The path to be saved to
-     */
-    public void save(Gson gson, Path path) { save(gson, path, false); } // default no info printed
-    /**
-     * Saves a Map to its respective file in the resources/data/Maps folder,
-     * with the filename [name].json where [name] is the Map's name.
+     * Saves a Track to its respective file in the resources/data/Tracks folder,
+     * with the filename [name].json where [name] is the Track's name.
      * @param gson : The Gson object to use for saving
      */
-    public void save(Gson gson) { save(gson, Path.of(DEFAULT_PATH + name + ".json")); } // append the [name].json to the end of the Path
+    public void save(Gson gson) { save(gson, false); }
 
+    // misc and useful stuff
+    public boolean equals(Object o) {
+        if (this == o) { return true; } // if they are the same reference return true
+        if (!(o instanceof Track)) { return false; } // if o is not even a Track return false
+
+        Track t = (Track) o; // cast it
+        // if they don't have the same attributes return false
+        if (t.getWidth() != this.getWidth() ||
+            t.getHeight() != this.getHeight() ||
+            t.startX != this.startX ||
+            t.startY != this.startY ||
+            t.startRotation != this.startRotation) 
+        { return false; }
+
+        // check all of the tile individually, return false on an inconsistency
+        for (int i = 0; i < this.getHeight(); i++) {
+            for (int j = 0; j < this.getWidth(); j++) {
+                if (this.map[i][j] != t.map[i][j]) { return false; }
+            }
+        }
+
+        // otherwise return true if it's all the same
+        return true;
+    }
     public Track clone() {
         Track clone = new Track();
 

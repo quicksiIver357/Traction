@@ -4,7 +4,7 @@ import javax.swing.ImageIcon;
 
 import client.java.io.quicksiiver.traction.panels.track.TrackPanel;
 import main.java.io.quicksiiver.traction.core.tiles.Tile;
-import main.java.io.quicksiiver.traction.core.tiles.specific.Wall;
+import main.java.io.quicksiiver.traction.core.tiles.types.Wall;
 
 public class Car {
     private double vx; // x velocity
