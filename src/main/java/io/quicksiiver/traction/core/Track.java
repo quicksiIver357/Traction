@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import main.java.io.quicksiiver.traction.core.tiles.Tile;
 import main.java.io.quicksiiver.traction.core.tiles.types.Checkpoint;
 import main.java.io.quicksiiver.traction.core.tiles.types.DriveableTile;
+import main.java.io.quicksiiver.traction.core.tiles.types.SpecialTile;
 import main.java.io.quicksiiver.traction.core.tiles.types.Wall;
 
 public class Track {
@@ -20,7 +21,7 @@ public class Track {
     private int startX; 
     private int startY;
     private double startRotation; // radians
-    private boolean playable; // contains start and end tiles
+    // private boolean playable; // contains start and end tiles
     private String name; // the name of the map, to be written to [name].json
 
     // classifiers
@@ -35,31 +36,7 @@ public class Track {
         this.name = "default";
         this.startRotation = Math.PI;
 
-        // map verification
-        int numberOfStartTiles = 0;
-        int numberOfEndTiles = 0;
-        int startTileX = 0;
-        int startTileY = 0;
-
-        for (int i = 0; i < map.length; i++) {
-            for (int j = 0; j < map[0].length; j++) {
-                if (map[i][j] == DriveableTile.START) { 
-                    numberOfStartTiles++; 
-
-                    startTileX = i;
-                    startTileY = j;
-                } 
-                else if (map[i][j] == DriveableTile.END) { numberOfEndTiles++; }
-            }
-        }
-
-        if (numberOfStartTiles != 1 || numberOfEndTiles == 0) { playable = false; }
-        else { playable = true; }
-
-        if (numberOfStartTiles > 0) {
-            startX = startTileX;
-            startY = startTileY;
-        }
+        verify();
     }
 
     // helpers
@@ -97,7 +74,37 @@ public class Track {
 
         return false;
     }
-    public boolean playable() { return playable; }
+    public boolean verify() { 
+        boolean playable;
+
+        // map verification
+        int numberOfStartTiles = 0;
+        int numberOfEndTiles = 0;
+        int startTileX = 0;
+        int startTileY = 0;
+
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[0].length; j++) {
+                if (map[i][j] == SpecialTile.START) { 
+                    numberOfStartTiles++; 
+
+                    startTileX = i;
+                    startTileY = j;
+                } 
+                else if (map[i][j] == SpecialTile.END) { numberOfEndTiles++; }
+            }
+        }
+
+        if (numberOfStartTiles != 1 || numberOfEndTiles == 0) { playable = false; }
+        else { playable = true; }
+
+        if (numberOfStartTiles > 0) {
+            startX = startTileX;
+            startY = startTileY;
+        }
+
+        return playable; 
+    }
     public String toString() {
         return Arrays.deepToString(map) + name;
     }
@@ -142,17 +149,16 @@ public class Track {
             String json = Files.readString(path);
             track = gson.fromJson(json, Track.class);
 
-            if (printInfo) { System.out.println("Map loaded successfully!"); } // print that it loaded fine
+            if (printInfo) { System.out.println("Track loaded successfully!"); } // print that it loaded fine
 
-        } catch (IOException e) { // in case of no Map, create a new one
-            if (printInfo) { System.out.println("Could not load Map. Creating a new one. . ."); }
+            return track;
+        } catch (IOException e) { // in case of no Map, return null
+            if (printInfo) { System.out.println("Could not load Track."); }
 
-            track = new Track(); // create a new Map
-
-            if (printInfo) { System.out.println("Map created successfully!"); }
+            return null;
         }
 
-        return track;
+        
     }
     /**
      * Loads a Map from a filepath. 

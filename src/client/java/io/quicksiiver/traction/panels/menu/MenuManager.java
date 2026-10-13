@@ -17,11 +17,13 @@ public class MenuManager extends JPanel {
     private StartGamePanel startGamePanel = new StartGamePanel(() -> { setActivePanel(MAIN_MENU); });
     private MainMenuPanel mainMenuPanel = new MainMenuPanel();
     private TrackDisplayPanel whiteTracksPanel = new TrackDisplayPanel(generateTrackSetNames("A"), false);
+    private SettingsPanel settingsPanel = new SettingsPanel();
 
     // strings for layout
     private static final String START_GAME = "startGame";
     private static final String MAIN_MENU = "mainMenu";
     private static final String WHITE_TRACKS = "whiteTracks";
+    private static final String SETTINGS = "settings";
 
     public MenuManager() {
         CardLayout cl = new CardLayout();
@@ -30,6 +32,7 @@ public class MenuManager extends JPanel {
 
         // action listeners for tabbing between pages and such
         mainMenuPanel.addPlayButtonActionListener(e -> { setActivePanel(WHITE_TRACKS); });
+        mainMenuPanel.addSettingsButtonActionListener(e -> { setActivePanel(SETTINGS); });
 
         // key listeners for tabbing between pages and such
         InputMap inputMap = getInputMap(WHEN_IN_FOCUSED_WINDOW);
@@ -54,6 +57,7 @@ public class MenuManager extends JPanel {
         add(startGamePanel, START_GAME);
         add(mainMenuPanel, MAIN_MENU);
         add(whiteTracksPanel, WHITE_TRACKS);
+        add(settingsPanel, SETTINGS);
 
         cl.show(this, START_GAME);
     }

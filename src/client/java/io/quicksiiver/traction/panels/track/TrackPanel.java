@@ -1,13 +1,17 @@
 package client.java.io.quicksiiver.traction.panels.track;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
+import java.nio.file.Path;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -15,14 +19,19 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
+import main.java.io.quicksiiver.traction.Main;
 import main.java.io.quicksiiver.traction.core.Car;
+import main.java.io.quicksiiver.traction.core.Replay;
 import main.java.io.quicksiiver.traction.core.Track;
-import main.java.io.quicksiiver.traction.core.tiles.Tile;
-import main.java.io.quicksiiver.traction.core.tiles.types.DriveableTile;
 
 public class TrackPanel extends GenericTrackPanel {
     private Car car; // only used for drawing
     private double timer = 0;
+    private boolean racing = true;
+
+    // pb stuff
+    private Car pbCar = new Car();
+    private Replay pb;
 
     // prevent magic numbers
     public static final int TILE_SIZE = 80;
@@ -33,7 +42,7 @@ public class TrackPanel extends GenericTrackPanel {
 
         // set the track and car and move it to the start position
         car = c;
-        System.out.println(c);
+        // System.out.println(c);
         reset();
         
         // keyboard input handling
@@ -112,37 +121,81 @@ public class TrackPanel extends GenericTrackPanel {
         // put here everything that should happen each frame (besides rendering)
         if (!paused) { 
             // process inputs only if the game has started
-            if (timer >= 0) { car.processInputs(track, getTileGrip(), dt); }
-            
-            timer += dt; // update the timer
+            if (racing) {
+                if (timer >= 0) { 
+                    if (car.processInputs(track, dt)) { 
+                        racing = false; 
+
+                        // save it if better
+                        if (pb == null || pb.getTime() > timer) {
+                            // save the replay file if it's a personal best
+                            pb = car.getReplay();
+
+                            // process the track name
+                            String[] split = track.getName().split("/");
+                            String processedName = split[0] + "/" + Main.getProps().getProperty("ghost") + "/" + split[1];
+
+                            pb.save(Main.gson, processedName, true);
+                        }
+                    }
+
+                    // pb ghost
+                    if (pb != null) { 
+                        // force the inputs for the replay car
+                        if (timer < pb.getTime() - dt) {
+                            pbCar.setWPressed(pb.getW(timer, dt));
+                            pbCar.setAPressed(pb.getA(timer, dt));
+                            pbCar.setSPressed(pb.getS(timer, dt));
+                            pbCar.setDPressed(pb.getD(timer, dt));
+                        }
+                        
+                        pbCar.processInputs(track, dt); 
+                    }
+                }
+
+                timer += dt; // update the timer
+            } else if (pb == null || pb.getTime() > car.getReplay().getTime()) {
+                // save the replay file if it's a personal best
+                // pb = car.getReplay();
+                // pb.save(Main.gson, track.getName(), true);
+            }   
         } else {
             // display debug info and such
         }
     }
 
     // helpers
-    private double getTileGrip() {
-        Tile current = track.getMap()[getTileY()][getTileX()];
-
-        if (current instanceof DriveableTile) { return ((DriveableTile) current).getFriction(); }
-        // else { throw new IllegalStateException("The car was stuck within a wall. "); }
-        else return 0;
-    }
     private void reset() {
         // reset the car's variables
-        car.reset(track.getStartX() * TILE_SIZE, track.getStartY() * TILE_SIZE, track.getStartRotation());
+        int startX = track.getStartX() * TILE_SIZE;
+        int startY = track.getStartY() * TILE_SIZE;
+        double startRotation = track.getStartRotation();
+
+        car.reset(startX, startY, startRotation);
+        if (pbCar != null) { pbCar.reset(startX, startY, startRotation); }
+        
 
         // reset the timer to the countdown
         timer = -3;
+        racing = true;
     }
 
     // setters
     public void setTrack(Track t) { 
         super.setTrack(t);
-        // System.out.println("help");
-        reset();
+
+        // if its not no track and not the default track do stuff with loading pbs and reset the car
+        if (t != null && t.getName() != "default") { 
+            reset(); // reset the car to start pos
+            
+            // process the track name
+            String[] split = t.getName().split("/");
+            String processedName = split[0] + "/" + Main.getProps().getProperty("ghost") + "/" + split[1] + ".json";
+
+            Path pbPath = Path.of(Replay.DEFAULT_PATH + processedName);
+            pb = Replay.loadReplay(Main.gson, pbPath, true);
+        }
     }
-    // public void setCarPos(Point p) { car.setPos(p); }
     public void setZoom(double d) { zoom = d; }
 
     // getters
@@ -157,11 +210,11 @@ public class TrackPanel extends GenericTrackPanel {
 
         Graphics2D g2d = (Graphics2D) g;
 
-        drawCar(g2d);
+        drawCars(g2d);
         drawTimer(g2d);
     }
 
-    private void drawCar(Graphics2D g2d) {
+    private void drawCars(Graphics2D g2d) {
         Point screenCenter = new Point(getWidth() / 2, getHeight() / 2);
 
         // draw the car
@@ -177,12 +230,30 @@ public class TrackPanel extends GenericTrackPanel {
 
         // do some calculations for drawing the car
         int carImageScale = (int) (zoom * CAR_SIZE);
+        Image carImage = Car.IMAGE.getImage();
 
         // draw it
-        g2d.drawImage(Car.IMAGE.getImage(), screenCenter.x - carImageScale / 2, screenCenter.y - carImageScale / 2, carImageScale, carImageScale, null);
+        g2d.drawImage(carImage, screenCenter.x - carImageScale / 2, screenCenter.y - carImageScale / 2, carImageScale, carImageScale, null);
+
+        // draw the replay car
+        AffineTransform replayTrans = new AffineTransform();  
+
+        int x = (int) (screenCenter.x + (pbCar.getX() - car.getX()) / zoom) - carImageScale / 2;
+        int y = (int) (screenCenter.y + (pbCar.getY() - car.getY()) / zoom) - carImageScale / 2;
+
+        float opacity = (float) Math.clamp(Math.sqrt(Math.pow(x - screenCenter.x, 2) + Math.pow(y - screenCenter.y, 2)) / 100, 0, 1) ;
+
+        Composite c = AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, opacity);         
+        g2d.setComposite(c);
+
+        replayTrans.rotate(pbCar.getRotation() + Math.PI, x, y);
+        g2d.setTransform(backup);
+        g2d.transform(replayTrans);
+        g2d.drawImage(carImage, x, y, carImageScale, carImageScale, null);
 
         // finally, restore the original AffineTransform
         g2d.setTransform(backup);
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 1));
     }
     private void drawTimer(Graphics2D g2d) {
         // screen pos
@@ -216,5 +287,4 @@ public class TrackPanel extends GenericTrackPanel {
     private String format(double a) { 
         return (a < 10 ? "0" + String.format("%.2f", a) : "" + String.format("%.2f", a)); 
     }
-
 }

@@ -56,7 +56,7 @@ public class TrackEditorPanel extends GenericTrackPanel {
         // drawing the ui and such
         setLayout(new BorderLayout());
 
-        sideBar.add("Tiles", createJScrollPane(DriveableTile.getAllDriveableTiles().toArray(new Tile[0])));
+        sideBar.add("Tiles", createJScrollPane(DriveableTile.getAllRegularDriveableTiles().toArray(new Tile[0])));
         sideBar.add("Walls", createJScrollPane(Wall.getAllWalls().toArray(new Wall[0])));
         sideBar.setPreferredSize(new Dimension(SIDEBAR_WIDTH, sideBar.getPreferredSize().height));
 
@@ -91,17 +91,17 @@ public class TrackEditorPanel extends GenericTrackPanel {
     @Override 
     public void setTrack(final Track track) {
         // don't disturb the reference
-        Track t = track;
+        Track t;
 
         // if it's the default track pretend there is no track and it's creating a new one
-        if (t.equals(new Track())) {
+        if (track == null) {
             // get width and height from user
             int width = popupInt("Enter the width of the track:");
             int height = popupInt("Enter the height of the track:");
 
             // create a new Track
             t = new Track(width, height);
-        }
+        } else { t = track; }
 
         // set the track
         super.setTrack(t);
@@ -189,7 +189,6 @@ public class TrackEditorPanel extends GenericTrackPanel {
 
             putTile(mousePos);
         }
-        
         @Override
         public void mouseDragged(MouseEvent e) {
             // preliminary calculations
@@ -208,7 +207,6 @@ public class TrackEditorPanel extends GenericTrackPanel {
                 y = oldY - mousePos.y / zoom;   
             } else { putTile(mousePos); } // drawing tiles logic
         }
-
         @Override
         public void mouseReleased(MouseEvent e) {
             // end dragging logic
@@ -226,24 +224,26 @@ public class TrackEditorPanel extends GenericTrackPanel {
             int xIndex = (int) ( ( ( mousePos.x - getWidth() / 2 ) / zoom + x ) / TILE_SIZE + 0.5 );
             int yIndex = (int) ( ( ( mousePos.y - getHeight() / 2 ) / zoom + y ) / TILE_SIZE + 0.5 );
 
-            // Tile oldTile = track.getTile(xIndex, yIndex);
-            track.setElement(xIndex, yIndex, drawing);
+            // if it's within the bounds of the array then set the tile
+            if (xIndex < track.getWidth() && yIndex < track.getHeight() && xIndex > 0 && yIndex > 0) {
+                Tile oldTile = track.getTile(xIndex, yIndex);
+                track.setElement(xIndex, yIndex, drawing);
 
-            updateImages();
+                // EFFICIENTLY update the images array
+                // if the old tile is no longer used in the Track remove it from the images
+                if (!track.contains(oldTile)) { images.remove((oldTile)); }
+                // if the new tile is not already in the array add it
+                boolean notAlreadyThere = true;
+                for (Tile tile : images.keySet()) {
+                    if (tile == drawing) {
+                        // it IS already in the images array, so you don't need to add it again
+                        notAlreadyThere = false;
+                        break;
+                    }
+                }
 
-            // // update the images array
-            // // if the old tile is no longer used in the Track remove it from the images
-            // if (!track.contains(oldTile)) { images.remove((oldTile)); }
-            // // if the new tile is not already in the array add it
-            // boolean notAlreadyThere = true;
-            // for (Tile tile : images.keySet()) {
-            //     if (tile == drawing) {
-            //         notAlreadyThere = false;
-            //         break;
-            //     }
-            // }
-
-            // if (notAlreadyThere) { images.put(drawing, new ImageIcon(drawing.getPath())); }
+                if (notAlreadyThere) { images.put(drawing, new ImageIcon(drawing.getPath())); }
+            }
         }
 
         // satisfy implementations
@@ -255,12 +255,5 @@ public class TrackEditorPanel extends GenericTrackPanel {
         public void mousePressed(MouseEvent e) {}
         @Override
         public void mouseMoved(MouseEvent e) {}
-
-        // helpers
-        // private static boolean near(Point p1, Point p2, double r) {
-        //     if (r*r >= Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)) { return true; }
-        //     else { return false; }
-        // }
     }
-
 }

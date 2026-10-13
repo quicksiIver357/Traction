@@ -10,9 +10,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import javax.swing.AbstractAction;
-import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -67,7 +67,10 @@ public class Client {
         .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), ESCAPE); // put the input
         frame.getRootPane().getActionMap().put(ESCAPE, new AbstractAction() { // add a function to do after
             @Override
-            public void actionPerformed(ActionEvent e) { cl.show(frame.getContentPane(), MENU_MANAGER); }
+            public void actionPerformed(ActionEvent e) { 
+                getTrack().save(Main.gson);
+                cl.show(frame.getContentPane(), MENU_MANAGER); 
+            }
         });
 
         // drawing
@@ -108,18 +111,23 @@ public class Client {
     // setters
     public void setTrack(Track t) {
         trackEditorPanel.setTrack(t);
-        trackPanel.setTrack(t);
+        trackPanel.setTrack(trackEditorPanel.getTrack());
     }
     public void openTrackFromName(String name, boolean playing) {
-        Track t = Main.loadTrack(name);
+        Track t = Track.loadTrack(Main.gson, Path.of(Track.DEFAULT_PATH + name + ".json"));
 
         // determine whether or not to use the editor
-        if (t.playable() && playing) { cl.show(frame.getContentPane(), TRACK_PANEL); } 
+        if (t == null) { 
+            JOptionPane.showMessageDialog(frame.getContentPane(), "Error loading track! Track was null"); 
+
+            if (!playing) { cl.show(frame.getContentPane(), TRACK_EDITOR_PANEL); }
+        } else if (t.verify() && playing) { cl.show(frame.getContentPane(), TRACK_PANEL); } 
         else if (!playing) { cl.show(frame.getContentPane(), TRACK_EDITOR_PANEL); }
-        else { JOptionPane.showMessageDialog(frame.getContentPane(), "Error loading track!"); }
+        else { JOptionPane.showMessageDialog(frame.getContentPane(), "Error loading track! Track is not validated"); }
 
         // set the track
         setTrack(t);
+        if (t == null) { getTrack().setName(name); }
     }
 
     // getters

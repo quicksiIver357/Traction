@@ -2,12 +2,16 @@ package main.java.io.quicksiiver.traction.core.tiles.types;
 
 import java.util.ArrayList;
 
-public abstract class SpecialTile extends DriveableTile {
+public class SpecialTile extends DriveableTile {
     private static ArrayList<SpecialTile> tiles = new ArrayList<>();
-    protected SpecialTile(String id, double friction) { 
-        super(id, 0);
-        tiles.add(this); 
+
+    // types of SpecialTile s
+    public static final SpecialTile START = new SpecialTile("start.png", 1, 2, 1);
+    public static final SpecialTile END = new SpecialTile("end.png", 0, 0, 0);
+
+    protected SpecialTile(String id, double friction, double acceleration, double turning) { 
+        super(id, friction, acceleration, turning);
+        if (!(this instanceof Checkpoint)) { tiles.add(this); } 
     }
-    @SuppressWarnings("unchecked")
-    public ArrayList<SpecialTile> getAllSpecialTiles() { return (ArrayList<SpecialTile>) tiles.clone(); }
+    public ArrayList<SpecialTile> getAllSpecialTiles() { return new ArrayList<>(tiles); }
 }

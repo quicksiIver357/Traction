@@ -4,6 +4,8 @@ import javax.swing.ImageIcon;
 
 import client.java.io.quicksiiver.traction.panels.track.TrackPanel;
 import main.java.io.quicksiiver.traction.core.tiles.Tile;
+import main.java.io.quicksiiver.traction.core.tiles.types.DriveableTile;
+import main.java.io.quicksiiver.traction.core.tiles.types.SpecialTile;
 import main.java.io.quicksiiver.traction.core.tiles.types.Wall;
 
 public class Car {
@@ -22,6 +24,9 @@ public class Car {
     private boolean s;
     private boolean d;
 
+    // replay files
+    private Replay currentReplay = new Replay();
+
     // constants among the car
     private static final double STEERING_STRENGTH = 1;
     private static final double ACCELERATION = 500;
@@ -38,20 +43,32 @@ public class Car {
     // useful things to save performance
     public static final ImageIcon IMAGE = new ImageIcon(IMG_FILEPATH);
 
-    public void processInputs(final Track t, double grip, final double dt) {
+    public boolean processInputs(final Track t, final double dt) {
+        DriveableTile driving;
+        Tile currentTile = t.getTile((int) (x / TrackPanel.TILE_SIZE + 0.5), (int) (y / TrackPanel.TILE_SIZE + 0.5));
+        if (!(currentTile instanceof DriveableTile)) {
+            // throw new IllegalStateException("Car was stuck in a wall");
+            driving = DriveableTile.DEFAULT;
+        } else {
+            driving = (DriveableTile) currentTile;
+        }
+
+        double acceleration = driving.getAcceleration();
+        double grip = driving.getFriction() * GRIP_STRENGTH;
+        double turning = driving.getTurning();
+
         // do calculations
-        grip *= GRIP_STRENGTH;
         boolean drifting = w && s;
         if (drifting) { grip /= 2; }
 
         int steerInput = (a ? 1 : 0) - (d ? 1 : 0);
-        double speed = getSpeed();
+        double speed = getSpeed(); 
 
         r -= (drifting ? 2.5 : 1) * // more powerful turning while drifting
-        steerInput * Math.sin( Math.PI / 3 * speed / MAX_SPEED ) * STEERING_STRENGTH * dt; // calculate turn amount
+        steerInput * Math.sin( Math.PI / 3 * speed / MAX_SPEED ) * STEERING_STRENGTH * turning * dt; // calculate turn amount
 
-        double ax = calculateAcceleration(grip, vx, true);
-        double ay = calculateAcceleration(grip, vy, false);
+        double ax = calculateAcceleration(grip, acceleration, vx, true);
+        double ay = calculateAcceleration(grip, acceleration, vy, false);
 
         // velocity
         vx += ax * dt;
@@ -68,11 +85,20 @@ public class Car {
         x += vx * dt;
         y += vy * dt;
         r += vr * dt;
+
+        // add to the replay
+        currentReplay.add(dt, w, a, s, d);
+
+        // see if it's done
+        // System.out.println(currentTile.getName());
+
+        if (currentTile == SpecialTile.END) { return true; }
+        else { return false; }
     }
 
 
     // helpers
-    private static int getIndexFromScreenValue(double v) { return (int) ( v / TrackPanel.TILE_SIZE ); }
+    private static int getIndexFromScreenValue(double v) { return (int) ( v / TrackPanel.TILE_SIZE); }
     private void applyGrip(double grip) {
         double speed = getSpeed();
 
@@ -180,8 +206,9 @@ public class Car {
 
         }
     }
-    private double calculateAcceleration(double grip, double directionalVelocity, boolean sin) {
+    private double calculateAcceleration(double grip, double accelerationMultiplier, double directionalVelocity, boolean sin) {
         int accelerateInput = (w ? 1 : 0) - (s ? 1 : 0);
+        double tileAccelerationMultiplier = grip * accelerationMultiplier;
 
         // calculate acceleration
         double rawAcceleration = accelerateInput * ACCELERATION * (sin ? Math.sin(-r) : Math.cos(-r));
@@ -190,7 +217,7 @@ public class Car {
         // add drag
         double drag = directionalVelocity * DRAG_RATE * grip * (accelerateInput != 0 ? 1 : 3);
 
-        return (rawAcceleration * slowdownFactor - drag) * grip; // multiply it all by grip to get accleration
+        return (rawAcceleration * slowdownFactor - drag) * tileAccelerationMultiplier; // multiply it all by tile stats to get accleration
     }
 
     // setters
@@ -206,6 +233,9 @@ public class Car {
         
         // reset velocity
         vx = vy = 0;
+
+        // reset replay
+        currentReplay = new Replay();
     }
 
     // getters
@@ -213,4 +243,5 @@ public class Car {
     public double getY() { return y; }
     public double getRotation() { return r; }
     public double getSpeed() { return Math.sqrt(vx*vx + vy*vy); }
+    public Replay getReplay() { return currentReplay; }
 }

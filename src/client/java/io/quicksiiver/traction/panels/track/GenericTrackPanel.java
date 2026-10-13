@@ -93,7 +93,7 @@ public abstract class GenericTrackPanel extends JPanel {
 
         // load all of the images
         images = new HashMap<>();
-        updateImages();
+        if (track != null) { updateImages(); }
     }
     protected void updateImages() {
         for (Tile[] column : track.getMap()) {

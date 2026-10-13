@@ -1,0 +1,328 @@
+{
+  "map": [
+    [
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      }
+    ],
+    [
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "basic.png"
+      }
+    ],
+    [
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "basic.png"
+      }
+    ],
+    [
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "start.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      }
+    ],
+    [
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      }
+    ],
+    [
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      }
+    ],
+    [
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      }
+    ],
+    [
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "ice.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "basic.png"
+      }
+    ],
+    [
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "default.png"
+      },
+      {
+        "id": "end.png"
+      },
+      {
+        "id": "basic.png"
+      }
+    ],
+    [
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      },
+      {
+        "id": "basic.png"
+      }
+    ]
+  ],
+  "startX": 3,
+  "startY": 3,
+  "startRotation": 3.141592653589793,
+  "name": "built-in/A1"
+}

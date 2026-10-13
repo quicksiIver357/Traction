@@ -1,6 +1,9 @@
 package main.java.io.quicksiiver.traction;
 
-import java.nio.file.Path;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 import java.util.Scanner;
 
 import com.google.gson.Gson;
@@ -23,6 +26,9 @@ public abstract class Main {
 
     // global stuff that should be shared across all methods
     public static int frames = 0;
+
+    // filepaths
+    public static final String GLOBAL_SETTINGS_FILEPATH = "src/main/resources/data/settings.properties";
 
     public static void main(String[] args) {
         // set it to anything but 0, 0 or 100, 100
@@ -67,7 +73,7 @@ public abstract class Main {
     // this runs when the game stops
     public static void stop() {
         Track track = Client.instance.getTrack(); // get track
-        track.save(gson); // save track
+        if (track != null) { track.save(gson); } // save track
 
         // close things
         Client.instance.dispose();
@@ -75,14 +81,25 @@ public abstract class Main {
         System.exit(0);
     }
 
-    // utility
-    public static Track loadTrack(String name) {
-        Track track = Track.loadTrack(gson, Path.of(Track.DEFAULT_PATH + name + ".json"));
-        if (track == null) { 
-            track = new Track(); 
-            track.setName("testing");
-        }
+    public static void modifySettings(String key, String value) {
+        // Source - https://stackoverflow.com/a/15337487
+        // Posted by Vasyl Keretsman, modified by community. See post 'Timeline' for change history
+        // Retrieved 2026-10-12, License - CC BY-SA 4.0
+        // gosh whoever wrote this had the right idea idea but 
+        // oh GOD they screwed up the syntax really badly
+        // also I split it up into two methods
+        Properties props = getProps();
+                
+        try (FileOutputStream out = new FileOutputStream(GLOBAL_SETTINGS_FILEPATH)){
+            props.setProperty(key, value);
+            props.store(out, null);
+        } catch (IOException e) {}
+    }
+    public static Properties getProps() {
+        Properties props = new Properties();
+        try (FileInputStream in = new FileInputStream(GLOBAL_SETTINGS_FILEPATH)) { props.load(in); }
+        catch (IOException e) {}
 
-        return track;
+        return props;
     }
 }

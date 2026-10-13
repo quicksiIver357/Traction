@@ -3,22 +3,22 @@ package client.java.io.quicksiiver.traction.panels.menu;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Point;
+import java.awt.Graphics;
 import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
 import client.java.io.quicksiiver.traction.Client;
 import client.java.io.quicksiiver.traction.misc.JGradientButton;
 
-public class MainMenuPanel extends JPanel {
+public class MainMenuPanel extends MenuPanel {
     private JGradientButton playButton = new JGradientButton("PLAY", BUTTON_GRADIENT_1, BUTTON_GRADIENT_2);
     private JGradientButton createButton = new JGradientButton("CREATE", BUTTON_GRADIENT_1, BUTTON_GRADIENT_2);
+    private JGradientButton settingsButton = new JGradientButton("SETTINGS", BUTTON_GRADIENT_1, BUTTON_GRADIENT_2);
 
     private static final Color BUTTON_GRADIENT_1 = new Color(200, 200, 200);
     private static final Color BUTTON_GRADIENT_2 = new Color(160, 160, 160);
@@ -56,6 +56,11 @@ public class MainMenuPanel extends JPanel {
         createButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         createButton.setAlignmentY(Component.CENTER_ALIGNMENT);
 
+        settingsButton.setBorder(buttonBorder);
+        resizeButton(settingsButton);
+        settingsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        settingsButton.setAlignmentY(Component.CENTER_ALIGNMENT);
+
         // make the buttons do things when clicked
         // https://stackoverflow.com/questions/8852560/how-to-make-popup-window-in-java
         createButton.addActionListener(e -> {
@@ -91,15 +96,18 @@ public class MainMenuPanel extends JPanel {
 
         // add the buttons
         add(Box.createVerticalGlue());
+        add(Box.createRigidArea(new Dimension(0, buttonSpacing * 3)));
         add(playButton);
         add(Box.createRigidArea(new Dimension(0, buttonSpacing)));
         add(createButton);
+        add(Box.createRigidArea(new Dimension(0, buttonSpacing)));
+        add(settingsButton);
         add(Box.createVerticalGlue());
-        
     }
 
     // setters
-    public void addPlayButtonActionListener(ActionListener l) { playButton.addActionListener(l); } 
+    public void addPlayButtonActionListener(ActionListener l) { playButton.addActionListener(l); }
+    public void addSettingsButtonActionListener(ActionListener l) { settingsButton.addActionListener(l); }
 
     // helpers
     private void resizeButton(JButton b) {
@@ -110,7 +118,9 @@ public class MainMenuPanel extends JPanel {
         b.setPreferredSize(d);
     }
 
-    public void clicked(Point mousePos) {
-        
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        drawTitle(g);
     }
 }
